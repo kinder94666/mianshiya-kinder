@@ -10,35 +10,26 @@ import com.kason.mianshiya.config.WxOpenConfig;
 import com.kason.mianshiya.constant.UserConstant;
 import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.exception.ThrowUtils;
-import com.kason.mianshiya.model.dto.user.UserAddRequest;
-import com.kason.mianshiya.model.dto.user.UserLoginRequest;
-import com.kason.mianshiya.model.dto.user.UserQueryRequest;
-import com.kason.mianshiya.model.dto.user.UserRegisterRequest;
-import com.kason.mianshiya.model.dto.user.UserUpdateMyRequest;
-import com.kason.mianshiya.model.dto.user.UserUpdateRequest;
+import com.kason.mianshiya.model.dto.user.*;
 import com.kason.mianshiya.model.entity.User;
 import com.kason.mianshiya.model.vo.LoginUserVO;
 import com.kason.mianshiya.model.vo.UserVO;
 import com.kason.mianshiya.service.UserService;
-
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 import static com.kason.mianshiya.service.impl.UserServiceImpl.SALT;
 
@@ -58,6 +49,8 @@ public class UserController {
 
     @Resource
     private WxOpenConfig wxOpenConfig;
+    @Autowired
+    private WxMpMessageRouter getWxMsgRouter;
 
     // region 登录相关
 
@@ -102,7 +95,10 @@ public class UserController {
         LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
         return ResultUtils.success(loginUserVO);
     }
-
+    @GetMapping("/login/haha")
+    public BaseResponse<Object> getHaha(){
+        return ResultUtils.success("haha");
+    }
     /**
      * 用户登录（微信开放平台）
      */
