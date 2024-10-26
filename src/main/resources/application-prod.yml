@@ -1,6 +1,6 @@
 # 线上配置文件
-# @author <a href="https://github.com/liyupi">程序员鱼皮</a>
-# @from <a href="https://yupi.icu">编程导航知识星球</a>
+# @author <a href="https://github.com/likason">kason</a>
+# @from <a href="https://kason.icu">编程导航知识星球</a>
 server:
   port: 8101
 spring:
@@ -8,7 +8,7 @@ spring:
   # todo 需替换配置 已替换
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mianshiya
+    url: jdbc:mysql://localhost:3306/Ïmianshiya
     username: root
     password: root
   # Redis 配置
