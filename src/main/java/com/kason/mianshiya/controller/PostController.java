@@ -22,6 +22,8 @@ import com.kason.mianshiya.service.UserService;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
+import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @from <a href="https://kason.icu">编程导航知识星球</a>
  */
 @RestController
+@Api(tags = "帖子管理")
 @RequestMapping("/post")
 @Slf4j
 public class PostController {
@@ -56,6 +59,7 @@ public class PostController {
      * @param request
      * @return
      */
+
     @PostMapping("/add")
     public BaseResponse<Long> addPost(@RequestBody PostAddRequest postAddRequest, HttpServletRequest request) {
         if (postAddRequest == null) {
