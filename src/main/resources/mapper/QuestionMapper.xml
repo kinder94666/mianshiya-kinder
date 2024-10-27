@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kason.mianshiya.mapper.QuestionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.kason.mianshiya.model.entity.Question">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="tags" property="tags" />
+        <result column="answer" property="answer" />
+        <result column="userId" property="userId" />
+        <result column="editTime" property="editTime" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+        <result column="isDelete" property="isDelete" />
+        <result column="reviewStatus" property="reviewStatus" />
+        <result column="reviewMessage" property="reviewMessage" />
+        <result column="reviewerId" property="reviewerId" />
+        <result column="reviewTime" property="reviewTime" />
+        <result column="viewNum" property="viewNum" />
+        <result column="thumbNum" property="thumbNum" />
+        <result column="favourNum" property="favourNum" />
+        <result column="priority" property="priority" />
+        <result column="source" property="source" />
+        <result column="needVip" property="needVip" />
+    </resultMap>
+
+</mapper>
