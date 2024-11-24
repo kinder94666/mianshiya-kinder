@@ -1,0 +1,11 @@
+# 公共配置文件
+# @author <a href="https://github.com/likason">kason</a>
+# @from <a href="https://kason.icu">编程导航知识星球</a>
+spring:
+  # sentinel 控制台地址
+  sentinelDashboard: localhost:8131
+  # 限流规则
+  limitRules:
+    - resource: "QuestionBank"
+      count: 5
+      grade: 1

@@ -67,7 +67,7 @@ public class QuestionBankQuestionVO implements Serializable {
         if (questionBankQuestionVO == null) {
             return null;
         }
-        QuestionBankQuestion questionBankQuestion = new QuestionBankQuestion();
+        QuestionBankQuestion questionBankQuestion = QuestionBankQuestion.builder().build();
         BeanUtils.copyProperties(questionBankQuestionVO, questionBankQuestion);
         return questionBankQuestion;
     }

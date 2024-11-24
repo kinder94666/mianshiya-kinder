@@ -11,10 +11,8 @@ import com.kason.mianshiya.common.ResultUtils;
 import com.kason.mianshiya.constant.UserConstant;
 import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.exception.ThrowUtils;
-import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionAddRequest;
-import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionQueryRequest;
-import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionRemoveRequest;
-import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionUpdateRequest;
+import com.kason.mianshiya.model.dto.questionbank.QuestionBankQuestionBatchRemoveRequest;
+import com.kason.mianshiya.model.dto.questionbankquestion.*;
 import com.kason.mianshiya.model.entity.QuestionBankQuestion;
 import com.kason.mianshiya.model.entity.User;
 import com.kason.mianshiya.model.vo.QuestionBankQuestionVO;
@@ -53,7 +51,7 @@ public class QuestionBankQuestionController {
     public BaseResponse<Long> addQuestionBankQuestion(@RequestBody QuestionBankQuestionAddRequest questionBankQuestionAddRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(questionBankQuestionAddRequest == null, ErrorCode.PARAMS_ERROR);
         // todo 在此处将实体类和 DTO 进行转换
-        QuestionBankQuestion questionBankQuestion = new QuestionBankQuestion();
+        QuestionBankQuestion questionBankQuestion = QuestionBankQuestion.builder().build();
         BeanUtils.copyProperties(questionBankQuestionAddRequest, questionBankQuestion);
         // 数据校验
         questionBankQuestionService.validQuestionBankQuestion(questionBankQuestion, true);
@@ -108,7 +106,7 @@ public class QuestionBankQuestionController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         // todo 在此处将实体类和 DTO 进行转换
-        QuestionBankQuestion questionBankQuestion = new QuestionBankQuestion();
+        QuestionBankQuestion questionBankQuestion = QuestionBankQuestion.builder().build();
         BeanUtils.copyProperties(questionBankQuestionUpdateRequest, questionBankQuestion);
         // 数据校验
         questionBankQuestionService.validQuestionBankQuestion(questionBankQuestion, false);
@@ -267,4 +265,7 @@ public class QuestionBankQuestionController {
         questionBankQuestionService.batchRemoveQuestionsFromBank(questionIdList, questionBankId);
         return ResultUtils.success(true);
     }
+
+
+
 }

@@ -3,7 +3,7 @@ package com.kason.mianshiya.model.dto.questionbank;
 import lombok.Data;
 
 @Data
-public class QuestionBankEditRequest {
+public class QuestionBankEditRequest implements java.io.Serializable {
     /**
      * id
      */

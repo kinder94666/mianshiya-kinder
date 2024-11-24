@@ -1,7 +1,27 @@
 # 公共配置文件
 # @author <a href="https://github.com/likason">kason</a>
 # @from <a href="https://kason.icu">编程导航知识星球</a>
+
+# 配置中心
+nacos:
+  config:
+    server-addr: 127.0.0.1:8848  # nacos 地址
+    bootstrap:
+      enable: true  # 预加载
+    data-id: mianshiya # 控制台填写的 Data ID
+    group: DEFAULT_GROUP # 控制台填写的 group
+    type: yaml  # 选择的文件格式
+    auto-refresh: true # 开启自动刷新
+
 spring:
+  # sentinel 控制台地址
+  sentinelDashboard: localhost:8131
+  # 限流规则
+  limitRules:
+    - resource: "QuestionBank"
+      count: 5
+      grade: 1
+
   application:
     name: springboot-init
   # 默认 dev 环境
@@ -28,16 +48,17 @@ spring:
   # todo 需替换配置，然后取消注释
   redis:
     database: 1
-    host: localhost
+    host: 119.8.32.2
     port: 6379
     timeout: 5000
-    password: mianshiya
+    password: root
   # Elasticsearch 配置
   # todo 需替换配置，然后取消注释
 #  elasticsearch:
 #    uris: http://localhost:9200
 #    username: root
 #    password: 123456
+#  宝塔 登陆密码： administrator Wzk.12138
   # 文件上传
   servlet:
     multipart:

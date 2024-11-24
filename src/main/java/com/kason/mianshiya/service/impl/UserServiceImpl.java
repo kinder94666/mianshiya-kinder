@@ -1,12 +1,11 @@
 package com.kason.mianshiya.service.impl;
 
-import static com.kason.mianshiya.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kason.mianshiya.common.ErrorCode;
 import com.kason.mianshiya.constant.CommonConstant;
+import com.kason.mianshiya.constant.RedisConstant;
 import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.mapper.UserMapper;
 import com.kason.mianshiya.model.dto.user.UserQueryRequest;
@@ -16,16 +15,21 @@ import com.kason.mianshiya.model.vo.LoginUserVO;
 import com.kason.mianshiya.model.vo.UserVO;
 import com.kason.mianshiya.service.UserService;
 import com.kason.mianshiya.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RBitSet;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.kason.mianshiya.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现
@@ -41,6 +45,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 盐值，混淆密码
      */
     public static final String SALT = "kason";
+    private final RedissonClient redissonClient;
+
+    public UserServiceImpl(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -268,5 +277,50 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public boolean addUserSignIn(long userId) {
+        LocalDate now = LocalDate.now();
+        String key = RedisConstant.getUserSignInKey(now.getYear(), userId);
+        RBitSet inbitSet = redissonClient.getBitSet(key);
+        int offset = now.getDayOfYear() ;
+        if(!inbitSet.get(offset)){
+            inbitSet.set(offset);
+            return true;
+        }
+        return true;
+    }
+
+    @Override
+    public Map<LocalDate, Boolean> getUserSignInRecord(long userId, Integer year) {
+        if(year  == null){
+            year = LocalDate.now().getYear();
+        }
+        String key = RedisConstant.getUserSignInKey(year, userId);
+        RBitSet inbitSet = redissonClient.getBitSet(key);
+        if(inbitSet == null){
+            return Collections.emptyMap();
+        }
+        //转换为java的BitSet
+        BitSet bitSet = inbitSet.asBitSet();
+
+        Map<LocalDate,Boolean> res = new LinkedHashMap<>();
+        int index = bitSet.nextSetBit(0);
+        while(index != -1){
+            LocalDate date = LocalDate.ofYearDay(year, index);
+            res.put(date, true);
+            index = bitSet.nextSetBit(index + 1);
+        }
+        //获得每一天的签到情况
+//        Map<LocalDate,Boolean> res = new LinkedHashMap<>();
+//        int totalDays =  Year.of(year).length();
+//        //获得每一天的签到情况
+//        for (int i = 1; i <= totalDays; i++) {
+//            LocalDate date = LocalDate.ofYearDay(year, i);
+//            res.put(date, inbitSet.get(i));
+//        }
+
+        return res;
     }
 }

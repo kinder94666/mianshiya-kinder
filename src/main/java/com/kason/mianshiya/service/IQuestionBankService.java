@@ -2,9 +2,10 @@ package com.kason.mianshiya.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.kason.mianshiya.model.dto.questionbank.QuestionBankQueryRequest;
 import com.kason.mianshiya.model.entity.QuestionBank;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.kason.mianshiya.model.vo.QuestionBankVO;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +33,14 @@ public interface IQuestionBankService extends IService<QuestionBank> {
      * @return
      */
     QueryWrapper<QuestionBank> getQueryWrapper(QuestionBankQueryRequest questionBankQueryRequest);
+
+    /**
+     *  获取题库封装
+     * @param questionBankPage
+     * @param request
+     * @return
+     */
+    Page<QuestionBankVO> getQuestionBankVOPage(Page<QuestionBank> questionBankPage, HttpServletRequest request);
 
 //    /**
 //     * 获取题库封装

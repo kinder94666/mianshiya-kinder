@@ -10,6 +10,7 @@ import com.kason.mianshiya.constant.UserConstant;
 import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.exception.ThrowUtils;
 import com.kason.mianshiya.model.dto.question.QuestionAddRequest;
+import com.kason.mianshiya.model.dto.question.QuestionBatchDeleteRequest;
 import com.kason.mianshiya.model.dto.question.QuestionUpdateRequest;
 import com.kason.mianshiya.model.entity.Question;
 import com.kason.mianshiya.model.entity.User;
@@ -116,7 +117,7 @@ public class QuestionController {
         }
         // 数据校验
         questionService.validQuestion(question, false);
-        // 判断是否存在
+        // 判断题目是否存在
         long id = questionUpdateRequest.getId();
         Question oldQuestion = questionService.getById(id);
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
@@ -146,6 +147,21 @@ public class QuestionController {
         ThrowUtils.throwIf(question == null, ErrorCode.NOT_FOUND_ERROR);
         // 获取封装类
         return ResultUtils.success(questionService.getQuestionVO(question, request));
+    }
+
+    /**
+     * 批量删除题目
+     * @param questionBatchDeleteRequest 批量删除请求
+     * @param request 请求
+     * @return
+     */
+    @PostMapping("/delete/batch")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> batchDeleteQuestions(@RequestBody QuestionBatchDeleteRequest questionBatchDeleteRequest,
+                                                      HttpServletRequest request) {
+        ThrowUtils.throwIf(questionBatchDeleteRequest == null, ErrorCode.PARAMS_ERROR);
+        questionService.batchDeleteQuestions(questionBatchDeleteRequest.getQuestionIdList());
+        return ResultUtils.success(true);
     }
 
 

@@ -1,13 +1,16 @@
 package com.kason.mianshiya.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kason.mianshiya.common.ErrorCode;
 import com.kason.mianshiya.constant.CommonConstant;
+import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.exception.ThrowUtils;
 import com.kason.mianshiya.mapper.QuestionBankQuestionMapper;
 import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionQueryRequest;
@@ -174,5 +177,59 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
         // endregion
 
         return questionBankQuestionVO;
+    }
+
+    /**
+     * 批量添加题目到题库
+     * @param questionIdList 题目id列表
+     * @param questionBankId 题库列表
+     * @param loginUser 用户
+     */
+    @Override
+    public void batchAddQuestionsToBank(List<Long> questionIdList, Long questionBankId, User loginUser) {
+        //1. 参数校验
+        ThrowUtils.throwIf(CollUtil.isEmpty(questionIdList), ErrorCode.PARAMS_ERROR, "题目id列表不能为空");
+        ThrowUtils.throwIf(questionBankId == null||questionBankId<=0, ErrorCode.PARAMS_ERROR, "题库id不能为空");
+        ThrowUtils.throwIf(loginUser == null, ErrorCode.NOT_LOGIN_ERROR);
+        //2. 查询题库是否存在
+        QuestionBank questionBank = questionBankService.getById(questionBankId);
+        ThrowUtils.throwIf(questionBank == null, ErrorCode.NOT_FOUND_ERROR, "题库不存在");
+        //3. 查询题目是否存在
+        List<Question> questionList = questionService.listByIds(questionIdList);
+        List<Long> questionIds = questionList.stream().map(Question::getId).collect(Collectors.toList());
+        ThrowUtils.throwIf(CollUtil.isEmpty(questionIds), ErrorCode.NOT_FOUND_ERROR, "题目不存在");
+
+
+        //4. 批量插入
+
+        for (Long questionId : questionIds) {
+            QuestionBankQuestion qbq = QuestionBankQuestion.builder()
+                    .questionBankId(questionBankId)
+                    .questionId(questionId)
+                    .userId(loginUser.getId())
+                    .build();
+
+            if(!this.save(qbq)){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入失败");
+            }
+        }
+
+    }
+
+    @Override
+    public void batchRemoveQuestionsFromBank(List<Long> questionIdList, Long questionBankId) {
+        ThrowUtils.throwIf(CollUtil.isEmpty(questionIdList), ErrorCode.PARAMS_ERROR, "题目id列表不能为空");
+
+        ThrowUtils.throwIf(questionBankId == null||questionBankId<=0, ErrorCode.PARAMS_ERROR, "题库id不能为空");
+
+        LambdaQueryWrapper<QuestionBankQuestion> wrapper = Wrappers.<QuestionBankQuestion>lambdaQuery()
+                .in(QuestionBankQuestion::getQuestionId, questionIdList)
+                .eq(QuestionBankQuestion::getQuestionBankId, questionBankId);
+        boolean remove = this.remove(wrapper);
+        if(!remove){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"删除失败");
+        }
+
+
     }
 }

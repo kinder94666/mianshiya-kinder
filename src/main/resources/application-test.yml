@@ -18,6 +18,7 @@ spring:
     host: 119.8.32.2
     port: 6379
     timeout: 5000
+    password: root
 #    password: 123456
   # Elasticsearch 配置
   # todo 需替换配置1

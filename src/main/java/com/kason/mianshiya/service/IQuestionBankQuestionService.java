@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kason.mianshiya.model.dto.questionbankquestion.QuestionBankQuestionQueryRequest;
 import com.kason.mianshiya.model.entity.QuestionBankQuestion;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.kason.mianshiya.model.entity.User;
 import com.kason.mianshiya.model.vo.QuestionBankQuestionVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -27,4 +29,8 @@ public interface IQuestionBankQuestionService extends IService<QuestionBankQuest
     Page<QuestionBankQuestionVO> getQuestionBankQuestionVOPage(Page<QuestionBankQuestion> questionBankQuestionPage, HttpServletRequest request);
 
     QuestionBankQuestionVO getQuestionBankQuestionVO(QuestionBankQuestion questionBankQuestion, HttpServletRequest request);
+
+    void batchAddQuestionsToBank(List<Long> questionIdList, Long questionBankId, User loginUser);
+
+    void batchRemoveQuestionsFromBank(List<Long> questionIdList, Long questionBankId);
 }

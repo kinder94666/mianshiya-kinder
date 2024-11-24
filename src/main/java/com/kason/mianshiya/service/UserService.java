@@ -6,9 +6,12 @@ import com.kason.mianshiya.model.dto.user.UserQueryRequest;
 import com.kason.mianshiya.model.entity.User;
 import com.kason.mianshiya.model.vo.LoginUserVO;
 import com.kason.mianshiya.model.vo.UserVO;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户服务
@@ -117,5 +120,21 @@ public interface UserService extends IService<User> {
      * @return
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
+
+    /**
+     * 添加用户登陆信息
+     * @param userId
+     * @return
+     */
+    boolean addUserSignIn(long userId);
+
+    /**
+     * 获取用户某个年份的签到记录
+     *
+     * @param userId 用户 id
+     * @param year   年份（为空表示当前年份）
+     * @return 签到记录映射
+     */
+    Map<LocalDate, Boolean> getUserSignInRecord(long userId, Integer year);
 
 }

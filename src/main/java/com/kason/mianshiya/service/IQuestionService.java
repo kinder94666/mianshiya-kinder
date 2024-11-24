@@ -1,13 +1,14 @@
 package com.kason.mianshiya.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.kason.mianshiya.model.dto.question.QuestionQueryRequest;
 import com.kason.mianshiya.model.entity.Question;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.kason.mianshiya.model.vo.QuestionVO;
 import org.apache.ibatis.annotations.Param;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -29,4 +30,6 @@ public interface IQuestionService extends IService<Question> {
     void validQuestion(@Param("question") Question question, @Param("add") boolean add);
 
     QuestionVO getQuestionVO(Question question, HttpServletRequest request);
+
+    void batchDeleteQuestions(List<Long> questionIdList);
 }

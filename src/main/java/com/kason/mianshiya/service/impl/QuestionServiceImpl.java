@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kason.mianshiya.common.ErrorCode;
 import com.kason.mianshiya.constant.QuestionXBankConstant;
+import com.kason.mianshiya.exception.BusinessException;
 import com.kason.mianshiya.exception.ThrowUtils;
 import com.kason.mianshiya.mapper.QuestionMapper;
 import com.kason.mianshiya.model.dto.question.QuestionQueryRequest;
@@ -109,7 +110,23 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         return questionVO;
     }
 
+    @Override
+    public void batchDeleteQuestions(List<Long> questionIdList) {
+        if(CollUtil.isEmpty(questionIdList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"题目id列表不能为空");
 
+        }
+        for (Long qid : questionIdList) {
+            boolean res = this.removeById(qid);
+            // 删除题库题目关联
+            res &= questionBankService.remove(Wrappers.lambdaQuery(QuestionBankQuestion.class)
+                    .eq(QuestionBankQuestion::getQuestionId, qid));
+            if(!res){
+                throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"删除题目失败");
+            }
+        }
+
+    }
 
 
 }
